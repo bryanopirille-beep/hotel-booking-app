@@ -78,13 +78,25 @@ function App() {
 
       <section>
         <h2>Habitaciones Disponibles ({filteredRooms.length})</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
-          {filteredRooms.map((room) => (
-            <RoomCard key={room.id} room={room} onReserve={handleReserve} />
-          ))}
-        </div>
+        
+        {filteredRooms.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
+            {filteredRooms.map((room) => (
+              <RoomCard key={room.id} room={room} onReserve={handleReserve} />
+            ))}
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '3rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0', marginTop: '1rem' }}>
+            <p style={{ color: '#718096', fontSize: '1.1rem', marginBottom: '1rem' }}>No se encontraron habitaciones que coincidan con tu búsqueda.</p>
+            <button 
+              onClick={() => { setSearchQuery(''); setSelectedCategory('Todas'); }}
+              style={{ padding: '0.6rem 1.2rem', backgroundColor: '#3182ce', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+            >
+              Mostrar todas las habitaciones
+            </button>
+          </div>
+        )}
       </section>
-
       {/* Formulario de reserva */}
       {selectedRoom && (
         <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0' }}>
