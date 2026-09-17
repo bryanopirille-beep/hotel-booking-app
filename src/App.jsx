@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { RoomCard } from './RoomCard'
 import './App.css'
 
@@ -13,7 +13,16 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState('Todas')
   const [selectedRoom, setSelectedRoom] = useState(null)
   const [clientName, setClientName] = useState('')
-  const [reservations, setReservations] = useState([])
+  
+  const [reservations, setReservations] = useState(() => {
+    const savedReservations = localStorage.getItem('hotel_reservations')
+    return savedReservations ? JSON.parse(savedReservations) : []
+  })
+
+  useEffect(() => {
+    localStorage.setItem('hotel_reservations', JSON.stringify(reservations))
+  }, [reservations])
+
   const [searchQuery, setSearchQuery] = useState('')
 
   const handleReserve = (room) => {
@@ -97,6 +106,7 @@ function App() {
           </div>
         )}
       </section>
+
       {/* Formulario de reserva */}
       {selectedRoom && (
         <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0' }}>
