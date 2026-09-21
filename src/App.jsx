@@ -1,262 +1,312 @@
-import React, { useState, useEffect } from 'react'
-import { RoomCard } from './RoomCard'
-import { RoomModal } from './RoomModal'
-import { CalendarPicker } from './CalendarPicker'
-import './App.css'
-function App() {
-  const [rooms] = useState([
-    { id: 1, name: 'Habitación Doble Deluxe', type: 'Doble', price: 120, capacity: 2, description: 'Vista al mar, cama king size y balcón privado.' },
-    { id: 2, name: 'Suite Ejecutiva', type: 'Suite', price: 250, capacity: 4, description: 'Espaciosa sala de estar, jacuzzi y desayuno incluido.' },
-    { id: 3, name: 'Habitación Individual Standard', type: 'Individual', price: 65, capacity: 1, description: 'Acogedora, ideal para viajeros de negocios.' },
-    { id: 4, name: 'Cabaña Familiar', type: 'Familiar', price: 180, capacity: 5, description: 'Dos habitaciones, cocina integrada y área verde privada.' },
-  ])
+import React, { useState, useRef } from 'react';
 
-  const [selectedCategory, setSelectedCategory] = useState('Todas')
-  const [selectedRoom, setSelectedRoom] = useState(null)
-  const [clientName, setClientName] = useState('')
-  const [detailsRoom, setDetailsRoom] = useState(null)
-  
-  const [reservations, setReservations] = useState(() => {
-    const savedReservations = localStorage.getItem('hotel_reservations')
-    return savedReservations ? JSON.parse(savedReservations) : []
-  })
+export default function App() {
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem('hotel_reservations', JSON.stringify(reservations))
-  }, [reservations])
+  const inicioRef = useRef(null);
+  const habitacionesRef = useRef(null);
+  const recreacionRef = useRef(null);
+  const contactoRef = useRef(null);
 
-  const [searchQuery, setSearchQuery] = useState('')
+  const scrollToSection = (elementRef) => {
+    elementRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
-  const handleReserve = (room) => {
-    setSelectedRoom(room)
-  }
+  const rooms = [
+    {
+      id: 1,
+      name: "Habitación Doble Deluxe",
+      type: "Doble",
+      description: "Vista al campo, cama king size y balcón privado.",
+      capacity: 2,
+      price: 120,
+      image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 2,
+      name: "Suite Ejecutiva",
+      type: "Suite",
+      description: "Espaciosa sala de estar, jacuzzi y desayuno incluido.",
+      capacity: 4,
+      price: 250,
+      image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 3,
+      name: "Habitación Individual Standard",
+      type: "Individual",
+      description: "Acogedora, ideal para viajeros de negocios.",
+      capacity: 1,
+      price: 65,
+      image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      id: 4,
+      name: "Cabaña Familiar",
+      type: "Familiar",
+      description: "Dos habitaciones, cocina integrada y área verde privada.",
+      capacity: 5,
+      price: 180,
+      image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80"
+    }
+  ];
 
-  const filteredRooms = rooms.filter(room => {
-    const matchesCategory = selectedCategory === 'Todas' || room.type === selectedCategory;
-    const matchesSearch = room.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          room.description.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  })
+  const recreationalAreas = [
+    {
+      id: 1,
+      name: "Salón Restaurant & Bar",
+      description: "Disfrute de almuerzos gourmet y cenas exclusivas con vista panorámica y un ambiente elegante.",
+      images: [
+        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80"
+      ]
+    },
+    {
+      id: 2,
+      name: "Cancha de Pádel",
+      description: "Cancha profesional de césped sintético e iluminación nocturna para disfrutar de un buen partido.",
+      image: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      id: 3,
+      name: "Cancha de Básquet",
+      description: "Cancha multideporte de alta calidad ideal para partidos dinámicos y entrenamiento.",
+      image: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      id: 4,
+      name: "Gran Piscina Exterior",
+      description: "Amplia piscina al aire libre rodeada de reposeras, solárium y servicio de bar junto al agua.",
+      images: [
+        "https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80"
+      ]
+    },
+    {
+      id: 5,
+      name: "Zona de Gimnasio",
+      description: "Equipamiento de última generación para mantener su rutina de entrenamiento durante la estadía.",
+      images: [
+        "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=800&q=80"
+      ]
+    }
+  ];
 
   return (
-    <div className="hotel-app" style={{ padding: '2rem', fontFamily: 'sans-serif', backgroundColor: '#f7fafc', minHeight: '100vh' }}>
-      <header style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <h1>Hotel Paraíso - Reservas</h1>
-        <p>Encuentra el espacio ideal para tu próxima estadía</p>
+    <div ref={inicioRef} style={{ 
+      minHeight: '100vh', 
+      backgroundImage: 'linear-gradient(rgba(10, 15, 30, 0.92), rgba(10, 15, 30, 0.92)), url("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1600&q=80")',
+      backgroundSize: 'cover',
+      backgroundAttachment: 'fixed',
+      backgroundPosition: 'center',
+      fontFamily: 'system-ui, -apple-system, sans-serif', 
+      color: '#1e293b' 
+    }}>
+      
+      {/* Navegación Mobile First */}
+      <nav style={{ 
+        backgroundColor: 'rgba(10, 15, 30, 0.95)', 
+        backdropFilter: 'blur(8px)', 
+        color: 'white', 
+        padding: '1rem', 
+        display: 'flex', 
+        flexDirection: 'column',
+        gap: '0.75rem',
+        alignItems: 'center', 
+        position: 'sticky', 
+        top: 0, 
+        zIndex: 1000,
+        boxShadow: '0 4px 6px -1px rgba(0,0,0,0.3)'
+      }}>
+        <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '700', letterSpacing: '0.05em', cursor: 'pointer', textAlign: 'center' }} onClick={() => scrollToSection(inicioRef)}>
+          THUNDER COUNTRY CLUB
+        </h2>
+        <div style={{ display: 'flex', gap: '1rem', fontSize: '0.85rem', fontWeight: '500', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <span style={{ cursor: 'pointer' }} onClick={() => scrollToSection(inicioRef)}>Inicio</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => scrollToSection(habitacionesRef)}>Habitaciones</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => scrollToSection(recreacionRef)}>Recreación</span>
+          <span style={{ cursor: 'pointer' }} onClick={() => scrollToSection(contactoRef)}>Contacto</span>
+        </div>
+      </nav>
+
+      {/* Banner Principal (Hero) */}
+      <header style={{ 
+        backgroundImage: 'linear-gradient(rgba(10, 15, 30, 0.5), rgba(10, 15, 30, 0.7)), url("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1600&q=80")', 
+        backgroundSize: 'cover', 
+        backgroundPosition: 'center', 
+        color: 'white', 
+        textAlign: 'center', 
+        padding: '6rem 1rem', 
+        marginBottom: '2.5rem',
+        boxShadow: 'inset 0 -20px 20px -20px rgba(10, 15, 30, 0.9)'
+      }}>
+        <h1 style={{ fontSize: '2.5rem', margin: '0 0 0.5rem 0', fontWeight: '800', letterSpacing: '-0.025em', textShadow: '0 2px 4px rgba(0,0,0,0.7)' }}>Thunder Country Club</h1>
+        <p style={{ fontSize: '1.1rem', margin: 0, fontWeight: '300', letterSpacing: '0.15em', textTransform: 'uppercase', textShadow: '0 1px 3px rgba(0,0,0,0.7)' }}>Elegancia y Confort</p>
       </header>
 
-      {/* Botones de Categoría */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-        {['Todas', 'Doble', 'Suite', 'Individual', 'Familiar'].map((category) => (
-          <button
-            key={category}
-            onClick={() => setSelectedCategory(category)}
-            style={{
-              padding: '0.5rem 1.2rem',
-              borderRadius: '20px',
-              border: 'none',
-              backgroundColor: selectedCategory === category ? '#3182ce' : '#e2e8f0',
-              color: selectedCategory === category ? 'white' : '#4a5568',
-              cursor: 'pointer',
-              fontWeight: 'bold',
-              transition: 'background-color 0.2s'
-            }}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-
-      {/* Barra de Búsqueda por Texto */}
-      <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
-        <input 
-          type="text"
-          placeholder="Buscar habitación por nombre o descripción..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={{ 
-            padding: '0.7rem 1.2rem', 
-            width: '100%', 
-            maxWidth: '450px', 
-            borderRadius: '20px', 
-            border: '1px solid #cbd5e0', 
-            outline: 'none',
-            fontSize: '0.95rem',
-            boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
-          }}
-        />
-      </div>
-
-      <section>
-        <h2>Habitaciones Disponibles ({filteredRooms.length})</h2>
+      {/* Contenido Principal con Mobile First Grid */}
+      <main style={{ width: '100%', maxWidth: '1200px', margin: '0 auto', padding: '0 1rem 3rem 1rem' }}>
         
-        {filteredRooms.length > 0 ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginTop: '1rem' }}>
-            {filteredRooms.map((room) => (
-              <RoomCard 
-                key={room.id} 
-                room={room} 
-                onReserve={handleReserve} 
-                onViewDetails={setDetailsRoom} 
-              />
-            ))}
+        {/* Sección Habitaciones */}
+        <div ref={habitacionesRef} style={{ marginBottom: '3.5rem', scrollMarginTop: '6rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '1.5rem', borderBottom: '2px solid rgba(255,255,255,0.15)', paddingBottom: '0.75rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'white', margin: 0 }}>Habitaciones Disponibles</h2>
+            <span style={{ color: '#cbd5e1', fontSize: '0.9rem', fontWeight: '600' }}>{rooms.length} opciones</span>
           </div>
-        ) : (
-          <div style={{ textAlign: 'center', padding: '3rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0', marginTop: '1rem' }}>
-            <p style={{ color: '#718096', fontSize: '1.1rem', marginBottom: '1rem' }}>No se encontraron habitaciones que coincidan con tu búsqueda.</p>
-            <button 
-              onClick={() => { setSearchQuery(''); setSelectedCategory('Todas'); }}
-              style={{ padding: '0.6rem 1.2rem', backgroundColor: '#3182ce', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-            >
-              Mostrar todas las habitaciones
-            </button>
-          </div>
-        )}
-      </section>
 
-    {/* Formulario de reserva con calendarios desplegables */}
-      {selectedRoom && (
-        <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
-          <h3 style={{ marginTop: 0, color: '#2d3748' }}>Completar Reserva para: {selectedRoom.name}</h3>
-          <p style={{ color: '#4a5568' }}>Precio por noche: <strong>${selectedRoom.price}</strong></p>
-
-          <form onSubmit={(e) => {
-            e.preventDefault()
-            
-            if (!window.checkInDate || !window.checkOutDate) {
-              alert('Por favor selecciona las fechas de llegada y salida.');
-              return;
-            }
-
-            const checkIn = new Date(window.checkInDate);
-            const checkOut = new Date(window.checkOutDate);
-            
-            if (checkOut <= checkIn) {
-              alert('La fecha de salida debe ser posterior a la fecha de llegada.');
-              return;
-            }
-
-            const diffTime = Math.abs(checkOut - checkIn);
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            const totalPrice = diffDays * selectedRoom.price;
-
-            const newReservation = {
-              id: Date.now(),
-              roomName: selectedRoom.name,
-              client: clientName,
-              checkIn: window.checkInDate,
-              checkOut: window.checkOutDate,
-              days: diffDays,
-              price: totalPrice
-            }
-
-            setReservations([...reservations, newReservation])
-            alert(`¡Reserva exitosa para ${clientName}!\nEstadía: ${diffDays} noches\nTotal: $${totalPrice}`)
-            setSelectedRoom(null)
-            setClientName('')
-            window.checkInDate = null;
-            window.checkOutDate = null;
-          }}>
-            
-            {/* Calendarios Desplegables */}
-            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-              <div style={{ flex: 1, minWidth: '220px' }}>
-                <CalendarPicker 
-                  label="Fecha de Llegada" 
-                  selectedDate={window.checkInDate}
-                  onSelectDate={(date) => {
-                    window.checkInDate = date;
-                  }} 
-                />
-              </div>
-
-              <div style={{ flex: 1, minWidth: '220px' }}>
-                <CalendarPicker 
-                  label="Fecha de Salida" 
-                  selectedDate={window.checkOutDate}
-                  onSelectDate={(date) => {
-                    window.checkOutDate = date;
-                  }} 
-                />
-              </div>
-            </div>
-
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 'bold', fontSize: '0.9rem', color: '#4a5568' }}>Tu Nombre:</label>
-              <input 
-                type="text" 
-                value={clientName} 
-                onChange={(e) => setClientName(e.target.value)} 
-                required
-                placeholder="Ej. Juan Pérez"
-                style={{ padding: '0.6rem', width: '100%', maxWidth: '350px', borderRadius: '6px', border: '1px solid #cbd5e0' }}
-              />
-            </div>
-
-            <button type="submit" style={{ backgroundColor: '#48bb78', color: 'white', border: 'none', padding: '0.7rem 1.4rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}>
-              Confirmar Reserva
-            </button>
-          </form>
-        </div>
-      )}
-      {/* Historial de Reservas */}
-      {reservations.length > 0 && (
-        <div style={{ marginTop: '3rem', padding: '1.5rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0' }}>
-          <h3>Mis Reservas Confirmadas ({reservations.length})</h3>
-          <ul style={{ listStyleType: 'none', padding: 0, marginTop: '1rem' }}>
-            {reservations.map((res) => (
-              <li key={res.id} style={{ padding: '0.8rem', marginBottom: '0.5rem', backgroundColor: '#f7fafc', borderRadius: '6px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span><strong>{res.roomName}</strong> — Cliente: {res.client}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                  <span style={{ color: '#2b6cb0', fontWeight: 'bold' }}>${res.price}</span>
-                  <button 
-                    onClick={() => {
-                      const updatedReservations = reservations.filter(item => item.id !== res.id);
-                      setReservations(updatedReservations);
-                    }}
-                    style={{ backgroundColor: '#e53e3e', color: 'white', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}
-                  >
-                    Eliminar
-                  </button>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem' }}>
+            {rooms.map(room => (
+              <div key={room.id} style={{
+                backgroundColor: '#F0F4F8',
+                borderRadius: '12px',
+                overflow: 'hidden',
+                boxShadow: '0 10px 20px -3px rgba(0, 0, 0, 0.3)',
+                border: '1px solid #d2d6dc',
+                display: 'flex',
+                flexDirection: 'column'
+              }}>
+                <div style={{ position: 'relative', height: '220px', overflow: 'hidden' }}>
+                  <img src={room.image} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <span style={{ 
+                    position: 'absolute', top: '12px', right: '12px', 
+                    backgroundColor: 'rgba(15, 23, 42, 0.85)', color: 'white', 
+                    padding: '0.25rem 0.75rem', borderRadius: '20px', fontSize: '0.75rem', fontWeight: '600', textTransform: 'uppercase'
+                  }}>
+                    {room.type}
+                  </span>
                 </div>
-              </li>
+
+                <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'space-between' }}>
+                  <div>
+                    <h3 style={{ margin: '0 0 0.5rem 0', color: '#0f172a', fontSize: '1.15rem', fontWeight: '700' }}>{room.name}</h3>
+                    <p style={{ margin: '0 0 1rem 0', color: '#475569', fontSize: '0.9rem', lineHeight: '1.5' }}>{room.description}</p>
+                    <p style={{ margin: '0 0 1.25rem 0', color: '#64748b', fontSize: '0.85rem' }}>Capacidad: <strong style={{ color: '#0f172a' }}>{room.capacity} personas</strong></p>
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '1rem', borderTop: '1px solid #d2d6dc' }}>
+                    <div>
+                      <span style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a' }}>${room.price}</span>
+                      <span style={{ fontSize: '0.8rem', color: '#64748b' }}> / noche</span>
+                    </div>
+                    
+                    <button 
+                      onClick={() => setSelectedRoom(room)}
+                      style={{ 
+                        backgroundColor: '#2563eb', color: 'white', border: 'none', 
+                        padding: '0.55rem 1.1rem', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '0.85rem',
+                        boxShadow: '0 4px 6px rgba(37, 99, 235, 0.2)'
+                      }}
+                    >
+                      Reservar
+                    </button>
+                  </div>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
-      )}
 
-      {/* Modal de Detalles */}
-      {detailsRoom && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-          <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '8px', maxWidth: '500px', width: '90%', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' }}>
-            <h2 style={{ marginTop: 0, color: '#2d3748' }}>{detailsRoom.name}</h2>
-            <p style={{ color: '#718096', fontStyle: 'italic' }}>Categoría: {detailsRoom.type}</p>
-            <p style={{ color: '#4a5568', margin: '1rem 0' }}>{detailsRoom.description}</p>
-            <p style={{ color: '#2b6cb0', fontWeight: 'bold' }}>Capacidad: {detailsRoom.capacity} personas</p>
-            <p style={{ color: '#2b6cb0', fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '1.5rem' }}>Precio: ${detailsRoom.price} / noche</p>
+        {/* Sección Recreación */}
+        <div ref={recreacionRef} style={{ scrollMarginTop: '6rem' }}>
+          <div style={{ marginBottom: '1.5rem', borderBottom: '2px solid rgba(255,255,255,0.15)', paddingBottom: '0.75rem' }}>
+            <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: 'white', margin: 0 }}>Áreas Recreativas y Servicios</h2>
+            <p style={{ color: '#cbd5e1', margin: '0.25rem 0 0 0', fontSize: '0.9rem' }}>Espacios diseñados para su entretenimiento y bienestar</p>
+          </div>
 
-            <div style={{ display: 'flex', gap: '1rem' }}>
-              <button 
-                onClick={() => {
-                  handleReserve(detailsRoom);
-                  setDetailsRoom(null);
-                }}
-                style={{ flex: 1, backgroundColor: '#48bb78', color: 'white', border: 'none', padding: '0.7rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-              >
-                Reservar Ahora
-              </button>
-              <button 
-                onClick={() => setDetailsRoom(null)}
-                style={{ flex: 1, backgroundColor: '#e2e8f0', color: '#4a5568', border: 'none', padding: '0.7rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-              >
-                Cerrar
-              </button>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+            {recreationalAreas.map((area) => (
+              <div key={area.id} style={{ 
+                backgroundColor: '#F0F4F8', 
+                borderRadius: '12px', 
+                padding: '1.25rem', 
+                border: '1px solid #d2d6dc', 
+                boxShadow: '0 8px 16px rgba(0,0,0,0.25)' 
+              }}>
+                <h3 style={{ fontSize: '1.2rem', color: '#0f172a', margin: '0 0 0.5rem 0' }}>{area.name}</h3>
+                <p style={{ color: '#475569', margin: '0 0 1rem 0', fontSize: '0.9rem' }}>{area.description}</p>
+                
+                {area.image ? (
+                  <div style={{ height: '240px', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 8px rgba(0,0,0,0.15)' }}>
+                    <img src={area.image} alt={area.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  </div>
+                ) : (
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1rem' }}>
+                    {area.images.map((imgUrl, index) => (
+                      <div key={index} style={{ height: '200px', borderRadius: '8px', overflow: 'hidden', boxShadow: '0 4px 8px rgba(0,0,0,0.15)' }}>
+                        <img src={imgUrl} alt={`${area.name} ${index + 1}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </main>
+
+      {/* Modal de Reserva */}
+      {selectedRoom && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '1rem' }}>
+          <div style={{ backgroundColor: '#F0F4F8', border: '1px solid #d2d6dc', padding: '1.75rem', borderRadius: '12px', maxWidth: '380px', width: '100%', boxShadow: '0 25px 35px -5px rgba(0,0,0,0.5)' }}>
+            <h3 style={{ margin: '0 0 0.5rem 0', color: '#0f172a' }}>¡Reserva Exitosa!</h3>
+            <p style={{ color: '#475569', fontSize: '0.9rem', margin: '0 0 0.75rem 0' }}>Ha seleccionado: <strong style={{ color: '#0f172a' }}>{selectedRoom.name}</strong></p>
+            <p style={{ color: '#64748b', fontSize: '0.85rem', margin: '0 0 1.25rem 0' }}>Precio por noche: <strong style={{ color: '#0f172a' }}>${selectedRoom.price}</strong></p>
+            <button 
+              onClick={() => setSelectedRoom(null)}
+              style={{ width: '100%', backgroundColor: '#2563eb', color: 'white', border: 'none', padding: '0.7rem', borderRadius: '8px', fontWeight: '600', cursor: 'pointer' }}
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}
-    </div>
-  )
-}
 
-export default App
+      {/* Pie de página / Contacto */}
+      <footer ref={contactoRef} style={{ backgroundColor: 'rgba(10, 15, 30, 0.95)', backdropFilter: 'blur(8px)', color: '#94a3b8', padding: '2.5rem 1rem 1.5rem 1rem', fontSize: '0.85rem', scrollMarginTop: '6rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.08)', paddingBottom: '1.5rem' }}>
+          <div>
+            <h3 style={{ color: 'white', fontSize: '1rem', marginBottom: '0.5rem' }}>Thunder Country Club</h3>
+            <p style={{ margin: 0, lineHeight: '1.5' }}>Disfrute de una experiencia única de confort, elegancia y tranquilidad.</p>
+          </div>
+          <div>
+            <h3 style={{ color: 'white', fontSize: '1rem', marginBottom: '0.5rem' }}>Contacto</h3>
+            <p style={{ margin: '0 0 0.25rem 0' }}>Teléfono: +595 975 147 804</p>
+            <p style={{ margin: '0 0 0.25rem 0' }}>Email: contacto@thundercountryclub.com</p>
+            <p style={{ margin: 0 }}>Ubicación: Asunción, Paraguay</p>
+          </div>
+        </div>
+        <p style={{ margin: 0, textAlign: 'center', fontSize: '0.8rem' }}>&copy; 2026 Thunder Country Club. Todos los derechos reservados.</p>
+      </footer>
+
+      {/* Estilos responsivos para Tablets y PC */}
+      <style>{`
+        @media (min-width: 640px) {
+          nav {
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            padding: 1rem 2rem !important;
+          }
+          nav h2 {
+            font-size: 1.25rem !important;
+          }
+          main {
+            padding: 0 1.5rem 4rem 1.5rem !important;
+          }
+        }
+        @media (min-width: 768px) {
+          main div[style*="grid-template-columns: 1fr"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+        @media (min-width: 1024px) {
+          main div[style*="grid-template-columns: repeat(2"] {
+            grid-template-columns: repeat(4, 1fr) !important;
+          }
+        }
+      `}</style>
+
+    </div>
+  );
+}
