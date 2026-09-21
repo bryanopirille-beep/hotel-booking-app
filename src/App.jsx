@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { RoomCard } from './RoomCard'
 import { RoomModal } from './RoomModal'
+import { CalendarPicker } from './CalendarPicker'
 import './App.css'
 function App() {
   const [rooms] = useState([
@@ -113,41 +114,91 @@ function App() {
         )}
       </section>
 
-      {/* Formulario de reserva */}
+    {/* Formulario de reserva con calendarios desplegables */}
       {selectedRoom && (
-        <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0' }}>
-          <h3>Completar Reserva para: {selectedRoom.name}</h3>
-          <p>Precio por noche: ${selectedRoom.price}</p>
+        <div style={{ marginTop: '2rem', padding: '1.5rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' }}>
+          <h3 style={{ marginTop: 0, color: '#2d3748' }}>Completar Reserva para: {selectedRoom.name}</h3>
+          <p style={{ color: '#4a5568' }}>Precio por noche: <strong>${selectedRoom.price}</strong></p>
+
           <form onSubmit={(e) => {
             e.preventDefault()
+            
+            if (!window.checkInDate || !window.checkOutDate) {
+              alert('Por favor selecciona las fechas de llegada y salida.');
+              return;
+            }
+
+            const checkIn = new Date(window.checkInDate);
+            const checkOut = new Date(window.checkOutDate);
+            
+            if (checkOut <= checkIn) {
+              alert('La fecha de salida debe ser posterior a la fecha de llegada.');
+              return;
+            }
+
+            const diffTime = Math.abs(checkOut - checkIn);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const totalPrice = diffDays * selectedRoom.price;
+
             const newReservation = {
               id: Date.now(),
               roomName: selectedRoom.name,
               client: clientName,
-              price: selectedRoom.price
+              checkIn: window.checkInDate,
+              checkOut: window.checkOutDate,
+              days: diffDays,
+              price: totalPrice
             }
+
             setReservations([...reservations, newReservation])
-            alert(`¡Reserva exitosa para ${clientName} en la ${selectedRoom.name}!`)
+            alert(`¡Reserva exitosa para ${clientName}!\nEstadía: ${diffDays} noches\nTotal: $${totalPrice}`)
             setSelectedRoom(null)
             setClientName('')
+            window.checkInDate = null;
+            window.checkOutDate = null;
           }}>
+            
+            {/* Calendarios Desplegables */}
+            <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+              <div style={{ flex: 1, minWidth: '220px' }}>
+                <CalendarPicker 
+                  label="Fecha de Llegada" 
+                  selectedDate={window.checkInDate}
+                  onSelectDate={(date) => {
+                    window.checkInDate = date;
+                  }} 
+                />
+              </div>
+
+              <div style={{ flex: 1, minWidth: '220px' }}>
+                <CalendarPicker 
+                  label="Fecha de Salida" 
+                  selectedDate={window.checkOutDate}
+                  onSelectDate={(date) => {
+                    window.checkOutDate = date;
+                  }} 
+                />
+              </div>
+            </div>
+
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem' }}>Tu Nombre:</label>
+              <label style={{ display: 'block', marginBottom: '0.4rem', fontWeight: 'bold', fontSize: '0.9rem', color: '#4a5568' }}>Tu Nombre:</label>
               <input 
                 type="text" 
                 value={clientName} 
                 onChange={(e) => setClientName(e.target.value)} 
                 required
-                style={{ padding: '0.5rem', width: '100%', maxWidth: '300px', borderRadius: '4px', border: '1px solid #ccc' }}
+                placeholder="Ej. Juan Pérez"
+                style={{ padding: '0.6rem', width: '100%', maxWidth: '350px', borderRadius: '6px', border: '1px solid #cbd5e0' }}
               />
             </div>
-            <button type="submit" style={{ backgroundColor: '#48bb78', color: 'white', border: 'none', padding: '0.6rem 1.2rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>
+
+            <button type="submit" style={{ backgroundColor: '#48bb78', color: 'white', border: 'none', padding: '0.7rem 1.4rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1rem' }}>
               Confirmar Reserva
             </button>
           </form>
         </div>
       )}
-
       {/* Historial de Reservas */}
       {reservations.length > 0 && (
         <div style={{ marginTop: '3rem', padding: '1.5rem', backgroundColor: 'white', borderRadius: '8px', border: '1px solid #cbd5e0' }}>
