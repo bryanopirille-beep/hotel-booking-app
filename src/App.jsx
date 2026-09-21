@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { RoomCard } from './RoomCard'
+import { RoomModal } from './RoomModal'
 import './App.css'
-
 function App() {
   const [rooms] = useState([
     { id: 1, name: 'Habitación Doble Deluxe', type: 'Doble', price: 120, capacity: 2, description: 'Vista al mar, cama king size y balcón privado.' },
@@ -156,7 +156,18 @@ function App() {
             {reservations.map((res) => (
               <li key={res.id} style={{ padding: '0.8rem', marginBottom: '0.5rem', backgroundColor: '#f7fafc', borderRadius: '6px', border: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span><strong>{res.roomName}</strong> — Cliente: {res.client}</span>
-                <span style={{ color: '#2b6cb0', fontWeight: 'bold' }}>${res.price}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <span style={{ color: '#2b6cb0', fontWeight: 'bold' }}>${res.price}</span>
+                  <button 
+                    onClick={() => {
+                      const updatedReservations = reservations.filter(item => item.id !== res.id);
+                      setReservations(updatedReservations);
+                    }}
+                    style={{ backgroundColor: '#e53e3e', color: 'white', border: 'none', padding: '0.4rem 0.8rem', borderRadius: '4px', cursor: 'pointer', fontSize: '0.85rem', fontWeight: 'bold' }}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
