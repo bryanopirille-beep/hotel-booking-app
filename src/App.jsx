@@ -85,7 +85,7 @@ const recreationalAreas = [
 export default function App() {
   const [checkInDate, setCheckInDate] = useState('2026-10-01');
   const [checkOutDate, setCheckOutDate] = useState('2026-10-05');
-  const [guests, setGuests] = useState(2);
+  const [guests, setGuests] = useState(0);
   const [guestName, setGuestName] = useState('');
   
  const [confirmedBookings, setConfirmedBookings] = useState([]);
