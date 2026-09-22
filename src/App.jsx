@@ -88,9 +88,7 @@ export default function App() {
   const [guests, setGuests] = useState(2);
   const [guestName, setGuestName] = useState('');
   
-  const [confirmedBookings, setConfirmedBookings] = useState([
-    { id: 101, roomName: "Habitación Doble Deluxe", guestName: "Carlos Gómez", checkIn: "2026-10-01", checkOut: "2026-10-05", nights: 4, total: 480 }
-  ]);
+ const [confirmedBookings, setConfirmedBookings] = useState([]);
 
   const [activeModal, setActiveModal] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
